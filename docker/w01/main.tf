@@ -1,4 +1,6 @@
 terraform {
+  required_version = ">= 1.8.0"
+
   required_providers {
     docker = {
       source  = "kreuzwerker/docker"
@@ -8,7 +10,7 @@ terraform {
 }
 
 provider "docker" {
-  host = "npipe:////.//pipe//docker_engine"
+  #   host = "npipe:////.//pipe//docker_engine"
 }
 
 resource "docker_network" "application" {
@@ -16,11 +18,11 @@ resource "docker_network" "application" {
 }
 
 resource "docker_image" "nginx" {
-  name = "nginx:latest"
+  name = "nginx:1.29-alpine"
 }
 
 resource "docker_image" "redis" {
-  name = "redis:latest"
+  name = "redis:8-alpine"
 }
 
 resource "docker_container" "web" {
@@ -42,8 +44,8 @@ resource "docker_container" "cache" {
   networks_advanced {
     name = docker_network.application.name
   }
-#   ports {
-#     internal = 6379
-#     external = 6379
-#   }
+  #   ports {
+  #     internal = 6379
+  #     external = 6379
+  #   }
 }
