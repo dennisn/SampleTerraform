@@ -6,3 +6,7 @@ Each exercise & sample will be in its own folders. For example, for Docker exerc
 Details exercise specs
 1. [Docker](./docker/README.md)
 
+## Misc.
+- Terraform installed
+- Graphviz installed: `winget install graphviz`
+  - This allows generate dependency graph as "*.png" file: `terraform graph | dot -Tpng > graph.png`
