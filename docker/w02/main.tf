@@ -34,11 +34,11 @@ resource "docker_network" "application" {
 }
 
 resource "docker_image" "nginx" {
-  name = var.web_image
+  name = var.images.web
 }
 
 resource "docker_image" "redis" {
-  name = var.cache_image
+  name = var.images.cache
 }
 
 resource "docker_container" "web" {
