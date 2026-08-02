@@ -6,12 +6,16 @@ resource "docker_network" "application" {
   name = "${local.resource_prefix}-network"
 }
 
+resource "docker_network" "external" {
+  name = "${local.resource_prefix}-external-network"
+}
+
 resource "docker_volume" "postgres_data" {
   name = "${local.resource_prefix}-postgres-data"
 
-#   lifecycle {
-#     prevent_destroy = true
-#   }
+  #   lifecycle {
+  #     prevent_destroy = true
+  #   }
 }
 
 resource "docker_image" "postgres" {
@@ -19,7 +23,7 @@ resource "docker_image" "postgres" {
   keep_locally = true
 }
 
-resource "docker_container" "database" {
+resource "docker_container" "postgres" {
   name  = "${local.resource_prefix}-database"
   image = docker_image.postgres.image_id
 

@@ -58,3 +58,47 @@ State is necessary because Terraform uses it to:
 3. external system
 4. as it will hide configuration drift, practically stop Terraform from manage the resource
 5. for volume, should use `prevent_destroy`. For externally managed metadata, `ignore_changes`
+
+### Refactoring resource addresses with `moved`
+
+1. Why does renaming a Terraform resource block normally cause a destroy-and-create plan?
+2. Does a moved block rename the Docker container itself?
+3. What does the moved block change?
+4. Why might you retain a moved block after applying the refactor?
+5. What should you check in terraform plan before applying a resource rename?
+==> 
+1. Because Terraform identify resource by its name (i.e. address) --> didn't know the new one is renamed from the old one
+2. No, just let Terraform know how the new block is coming to existence
+3. The `moved` block changes the **state-address mapping**: same docker container ID remains associated with the resource
+4. As other user/environment may still have the old resources
+5. Check if Terraform will do a destroy-create or a rename
+
+### More about `moved`
+1. What is the main operational difference between a `moved` block and `terraform state mv`?
+2. Why is a `moved` block generally safer for multiple environments?
+3. Does `terraform state rm` destroy the real Docker resource?
+4. What would the next plan likely propose after removing the PostgreSQL container from state but leaving it in configuration?
+5. Why could the subsequent apply fail?
+6. Why should a state backup be treated as sensitive data?
+==>
+1. `moved` is declarative, while `terraform state mv` is manually change the state
+2. `moved` can be applied to multiple environments automatically via Terraform
+3. Not destroy the real Docker resource, just remove it from state file
+4. Terraform will propose to recreate the resource
+5. It will fail as the resource already exist
+6. State backup may contain credentials or other sensitive values
+
+### Import resource
+1. Why must a resource block normally exist before importing a resource?
+2. Does importing create the Docker resource?
+3. Does import guarantee that the configuration matches the real resource?
+4. What happens if the imported resource is later removed from configuration?
+5. Why can declarative import blocks be useful for team review?
+6. What environmental limitation can make hardcoded import IDs inconvenient?
+==> 
+1. provide the address & desired configuration to which the existing object is mapped
+2. No
+3. No, only update state to match the real-work state
+4. Terraform may try to destroy that resource
+5. Declarative imports make the intended state change visible and reviewable in version control
+6. IDs are not the same for different environment
