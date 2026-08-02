@@ -8,6 +8,10 @@ resource "docker_network" "application" {
 
 resource "docker_volume" "postgres_data" {
   name = "${local.resource_prefix}-postgres-data"
+
+#   lifecycle {
+#     prevent_destroy = true
+#   }
 }
 
 resource "docker_image" "postgres" {
@@ -18,6 +22,11 @@ resource "docker_image" "postgres" {
 resource "docker_container" "database" {
   name  = "${local.resource_prefix}-database"
   image = docker_image.postgres.image_id
+
+  labels {
+    label = "managed-by"
+    value = "terraform"
+  }
 
   env = [
     "POSTGRES_DB=${var.postgres_db}",
