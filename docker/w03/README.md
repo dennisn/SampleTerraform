@@ -118,3 +118,18 @@ State is necessary because Terraform uses it to:
 4. As it's reviewable in source code control
 5. No
 6. That no resource destroy is plan
+
+### Final review
+1. Which mechanism should be used to rename a resource safely?
+2. Which mechanism should be used to adopt an existing resource?
+3. Which mechanism should be used to relinquish management without destruction?
+4. Which lifecycle setting protects a persistent volume from Terraform destruction?
+5. Why is depends_on not an application-readiness mechanism?
+6. What is the difference between configuration drift and a resource being absent from state?
+==>
+1. using `moved` block
+2. using `import` block
+3. using `removed` block with `lifecycle.destroy = false`
+4. using `prevent_destroy` in lifecycle block
+5. as it's doesn't guarantee the depended on resource being ready
+6. configuration drift: resource state change outside of Terraform, hence it will try to update to the desired state. If the resource being absent from state, then it will try to recreate it
