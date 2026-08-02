@@ -102,3 +102,19 @@ State is necessary because Terraform uses it to:
 4. Terraform may try to destroy that resource
 5. Declarative imports make the intended state change visible and reviewable in version control
 6. IDs are not the same for different environment
+
+### Safely handing off a resource
+
+1. Why is deleting a resource block not the same as relinquishing management?
+2. What does `destroy = false` mean inside a removed block?
+3. What is the default behaviour when destroy is omitted?
+4. Why is a removed block preferable to terraform state rm for team workflows?
+5. After applying the removed block, can Terraform still detect drift for that Docker network?
+6. What should you verify in the plan before applying a resource hand-off?
+==>
+1. Delete a resource block will result in that resource being destroyed
+2. Mean Terraform will remove the state, but not destroy the resource
+3. default behavior to destroy the resource
+4. As it's reviewable in source code control
+5. No
+6. That no resource destroy is plan

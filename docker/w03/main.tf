@@ -6,8 +6,16 @@ resource "docker_network" "application" {
   name = "${local.resource_prefix}-network"
 }
 
-resource "docker_network" "external" {
-  name = "${local.resource_prefix}-external-network"
+# resource "docker_network" "external" {
+#   name = "${local.resource_prefix}-external-network"
+# }
+
+removed {
+  from = docker_network.external
+
+  lifecycle {
+    destroy = false
+  }
 }
 
 resource "docker_volume" "postgres_data" {
