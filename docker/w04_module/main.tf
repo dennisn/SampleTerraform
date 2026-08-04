@@ -20,14 +20,14 @@ resource "docker_image" "nginx" {
   name = "nginx:alpine"
 }
 
-resource "docker_image" "service" {
-  for_each = toset([
-    "redis:alpine",
-    "httpd:alpine"
-  ])
+# resource "docker_image" "service" {
+#   for_each = toset([
+#     "redis:alpine",
+#     "httpd:alpine"
+#   ])
 
-  name = each.value
-}
+#   name = each.value
+# }
 
 resource "docker_container" "web" {
   for_each = var.web_containers
@@ -50,30 +50,70 @@ resource "docker_container" "web" {
   }
 }
 
-module "cache" {
-  source = "./modules/docker-cont"
+# module "cache" {
+#   source = "./modules/docker-cont"
 
-  name         = "w04-cache"
-  image_id     = docker_image.service["redis:alpine"].image_id
-  network_name = docker_network.application.name
+#   name         = "w04-cache"
+#   image_id     = docker_image.service["redis:alpine"].image_id
+#   network_name = docker_network.application.name
 
-  labels = {
-    service = "cache"
-    method  = "module"
-  }
+#   labels = {
+#     service = "cache"
+#     method  = "module"
+#   }
+# }
+
+# module "static" {
+#   source = "./modules/docker-cont"
+
+#   name          = "w04-static"
+#   image_id      = docker_image.service["httpd:alpine"].image_id
+#   network_name  = docker_network.application.name
+#   internal_port = 80
+#   external_port = 8090
+
+#   labels = {
+#     service = "static"
+#     method  = "module"
+#   }
+# }
+
+resource "docker_image" "service" {
+  for_each = var.application_services
+
+  name = each.value.image
 }
 
-module "static" {
+moved {
+  from = docker_image.service["redis:alpine"]
+  to   = docker_image.service["cache"]
+}
+
+moved {
+  from = docker_image.service["httpd:alpine"]
+  to   = docker_image.service["static"]
+}
+
+module "application_service" {
+  for_each = var.application_services
+
   source = "./modules/docker-cont"
 
-  name          = "w04-static"
-  image_id      = docker_image.service["httpd:alpine"].image_id
-  network_name  = docker_network.application.name
-  internal_port = 80
-  external_port = 8090
+  name         = "w04-${each.key}"
+  image_id     = docker_image.service[each.key].image_id
+  network_name = docker_network.application.name
 
-  labels = {
-    service = "static"
-    method  = "module"
-  }
+  internal_port = each.value.internal_port
+  external_port = each.value.external_port
+  labels        = each.value.labels
+}
+
+moved {
+  from = module.cache.docker_container.this
+  to   = module.application_service["cache"].docker_container.this
+}
+
+moved {
+  from = module.static.docker_container.this
+  to   = module.application_service["static"].docker_container.this
 }

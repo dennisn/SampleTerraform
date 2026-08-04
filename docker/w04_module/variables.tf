@@ -28,3 +28,34 @@ variable "web_containers" {
     }
   }
 }
+
+variable "application_services" {
+  description = "Application service container configuration"
+
+  type = map(object({
+    image         = string
+    internal_port = optional(number)
+    external_port = optional(number)
+    labels        = optional(map(string), {})
+  }))
+
+  default = {
+    cache = {
+      image = "redis:alpine"
+      labels = {
+        service = "cache"
+        method  = "module"
+      }
+    }
+
+    static = {
+      image         = "httpd:alpine"
+      internal_port = 80
+      external_port = 8090
+      labels = {
+        service = "static"
+        method  = "module"
+      }
+    }
+  }
+}
