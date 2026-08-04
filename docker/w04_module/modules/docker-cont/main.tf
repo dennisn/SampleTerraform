@@ -1,5 +1,5 @@
 resource "docker_container" "this" {
-  name = var.name
+  name  = var.name
   image = var.image_id
 
   networks_advanced {
@@ -8,13 +8,13 @@ resource "docker_container" "this" {
 
   dynamic "ports" {
     for_each = (
-        var.internal_port != null &&
-        var.external_port != null
+      var.internal_port != null &&
+      var.external_port != null
     ) ? [1] : []
 
     content {
-        internal = var.internal_port
-        external = var.external_port
+      internal = var.internal_port
+      external = var.external_port
     }
   }
 
@@ -25,6 +25,6 @@ resource "docker_container" "this" {
       label = labels.key
       value = labels.value
     }
-    
+
   }
 }

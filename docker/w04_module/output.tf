@@ -20,7 +20,7 @@ output "web_container_test_label" {
 # }
 
 output "application_service_names" {
-  value = [for instance in module.application_service: instance.name]
+  value = [for instance in module.application_service : instance.name]
 }
 
 output "static_network_data" {
