@@ -8,5 +8,5 @@ output "web_container_names_name" {
 }
 
 output "web_container_test_label" {
-  value = [for instance in docker_container.web : instance.labels ]
+  value = [for instance in docker_container.web : instance.labels]
 }
