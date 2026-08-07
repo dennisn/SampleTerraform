@@ -8,3 +8,5 @@ Exercise
 04. [Week 04](./w04/README.md)
     - [Refactor to module](./w04_module/README.md)
 05. [Week 05](./w05/README.md)
+06. [Week 06](./w06/README.md)
+07. [Week 07](./w07/README.md)
